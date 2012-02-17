@@ -3,7 +3,7 @@ OFLAGS = -O3 -DNDEBUG
 #OFLAGS = -pg
 #TOOL=valgrind -q
 
-OBJS = tree.o compile.o
+OBJS = tree.o compile.o header.o footer.o preamble.o
 
 all : greg
 
@@ -28,6 +28,17 @@ greg.o : greg.c
 
 grammar : .FORCE
 	./greg -o greg.c greg.g
+
+
+header.c: header.template
+	perl -w text2c.pl -o $@ $<
+
+footer.c: footer.template
+	perl -w text2c.pl -o $@ $<
+	
+preamble.c: preamble.template
+	perl -w text2c.pl -o $@ $<
+    
 
 clean : .FORCE
 	rm -rf *~ *.o *.greg.[cd] greg samples/*.o samples/calc samples/*.dSYM testing1.c testing2.c *.dSYM selftest/

@@ -1,0 +1,78 @@
+/* begin footer.template */
+
+#ifndef YY_PART
+
+typedef int (*yyrule)(GREG *G);
+
+YY_PARSE(int) YY_NAME(parse_from)(GREG *G, yyrule yystart)
+{
+  int yyok;
+  if (!G->buflen)
+    {
+      G->buflen= YY_BUFFER_START_SIZE;
+      G->buf= (char*)YY_ALLOC(G->buflen, G->data);
+      G->textlen= YY_BUFFER_START_SIZE;
+      G->text= (char*)YY_ALLOC(G->textlen, G->data);
+      G->thunkslen= YY_STACK_SIZE;
+      G->thunks= (yythunk*)YY_ALLOC(sizeof(yythunk) * G->thunkslen, G->data);
+      G->valslen= YY_STACK_SIZE;
+      G->vals= (YYSTYPE*)YY_ALLOC(sizeof(YYSTYPE) * G->valslen, G->data);
+      G->begin= G->end= G->pos= G->limit= G->thunkpos= 0;
+    }
+  G->pos = 0;
+  G->begin= G->end= G->pos;
+  G->thunkpos= 0;
+  G->val= G->vals;
+  yyok= yystart(G);
+  if (yyok) yyDone(G);
+  yyCommit(G);
+  return yyok;
+  (void)yyrefill;
+  (void)yymatchDot;
+  (void)yymatchChar;
+  (void)yymatchString;
+  (void)yymatchClass;
+  (void)yyDo;
+  (void)yyText;
+  (void)yyDone;
+  (void)yyCommit;
+  (void)yyAccept;
+  (void)yyPush;
+  (void)yyPop;
+  (void)yySet;
+}
+
+/*
+YY_PARSE(int) YY_NAME(parse)(GREG *G)
+{
+  return YY_NAME(parse_from)(G, yy_%s);
+}
+*/
+
+YY_PARSE(void) YY_NAME(init)(GREG *G)
+{
+    memset(G, 0, sizeof(GREG));
+}
+YY_PARSE(void) YY_NAME(deinit)(GREG *G)
+{
+    if (G->buf) YY_FREE(G->buf);
+    if (G->text) YY_FREE(G->text);
+    if (G->thunks) YY_FREE(G->thunks);
+    if (G->vals) YY_FREE(G->vals);
+}
+YY_PARSE(GREG *) YY_NAME(parse_new)(YY_XTYPE data)
+{
+  GREG *G = (GREG *)YY_CALLOC(1, sizeof(GREG), G->data);
+  G->data = data;
+  return G;
+}
+
+YY_PARSE(void) YY_NAME(parse_free)(GREG *G)
+{
+  YY_NAME(deinit)(G);
+  YY_FREE(G);
+}
+
+#endif
+
+/* end footer.template */
